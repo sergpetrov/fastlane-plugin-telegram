@@ -2,7 +2,7 @@ module Fastlane
   module Actions
     class TelegramAction < Action
       def self.run(params)
-        UI.message("Sned message to a telegram channel")
+        UI.message("Sending message to a telegram channel")
 
         token = params[:token]
         chat_id = params[:chat_id]
@@ -37,7 +37,7 @@ module Fastlane
                                                type: String),
                    FastlaneCore::ConfigItem.new(key: :chat_id,
                                            env_name: "TELEGRAM_CHAT_ID",
-                                        description: "Unique identifier for the target chat or username of the target channel (in the format @channelusername)",
+                                        description: "Unique identifier for the target chat (not in the format @channel). For getting chat id you can send any message to your bot and get chat id from response https://api.telegram.org/botYOUR_TOKEN/getupdates",
                                            optional: false,
                                                type: String),
                    FastlaneCore::ConfigItem.new(key: :text,
