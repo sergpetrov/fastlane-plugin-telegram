@@ -48,7 +48,7 @@ module Fastlane
                                                type: String)
                    FastlaneCore::ConfigItem.new(key: :parse_mode,
                                            env_name: "TELEGRAM_PARSE_MODE",
-                                        description: "Flag for using markdown or HTML support in message",
+                                        description: "Param (Markdown / HTML) for using markdown or HTML support in message.",
                                            optional: true,
                                                type: String)
                 ]
