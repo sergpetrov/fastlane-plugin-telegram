@@ -10,7 +10,7 @@ module Fastlane
         parse_mode = params[:parse_mode]
 
         uri = URI.parse("https://api.telegram.org/bot#{token}/sendMessage")
-        response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text})
+        response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text, :parse_mode => parse_mode})
       end
 
       def self.description
