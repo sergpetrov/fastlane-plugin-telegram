@@ -7,9 +7,10 @@ module Fastlane
         token = params[:token]
         chat_id = params[:chat_id]
         text = params[:text]
+        parse_mode = params[:parse_mode]
 
         uri = URI.parse("https://api.telegram.org/bot#{token}/sendMessage")
-        response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text})
+        response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text, :parse_mode => parse_mode})
       end
 
       def self.description
@@ -44,6 +45,11 @@ module Fastlane
                                            env_name: "TELEGRAM_TEXT",
                                         description: "Text of the message to be sent",
                                            optional: false,
+                                               type: String)
+                   FastlaneCore::ConfigItem.new(key: :parse_mode,
+                                           env_name: "TELEGRAM_PARSE_MODE",
+                                        description: "Param (Markdown / HTML) for using markdown or HTML support in message.",
+                                           optional: true,
                                                type: String)
                 ]
       end
