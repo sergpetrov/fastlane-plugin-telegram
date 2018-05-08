@@ -10,7 +10,17 @@ module Fastlane
         parse_mode = params[:parse_mode]
 
         uri = URI.parse("https://api.telegram.org/bot#{token}/sendMessage")
-        response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text, :parse_mode => parse_mode})
+        
+        if params[:proxy] 
+          proxy_uri = URI.parse(params[:proxy])
+          http = Net::HTTP.new(uri.host, uri.port, proxy_uri.host, proxy_uri.port)
+          http.use_ssl = true
+          request = Net::HTTP::Post.new(uri.request_uri)
+          request.set_form_data({"chat_id" => chat_id, "text" => text, "parse_mode" => parse_mode})
+          response = http.request(request)
+        else
+          response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text, :parse_mode => parse_mode})
+        end
       end
 
       def self.description
@@ -45,10 +55,15 @@ module Fastlane
                                            env_name: "TELEGRAM_TEXT",
                                         description: "Text of the message to be sent",
                                            optional: false,
-                                               type: String)
+                                               type: String),
                    FastlaneCore::ConfigItem.new(key: :parse_mode,
                                            env_name: "TELEGRAM_PARSE_MODE",
-                                        description: "Param (Markdown / HTML) for using markdown or HTML support in message.",
+                                        description: "Param (Markdown / HTML) for using markdown or HTML support in message",
+                                           optional: true,
+                                               type: String),
+                   FastlaneCore::ConfigItem.new(key: :proxy,
+                                           env_name: "TELEGRAM_PROXY",
+                                        description: "Proxy URL to be used in network requests. Example: (https://123.45.67.89:80)",
                                            optional: true,
                                                type: String)
                 ]
