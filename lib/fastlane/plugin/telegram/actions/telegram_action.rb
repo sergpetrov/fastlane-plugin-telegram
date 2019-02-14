@@ -11,9 +11,9 @@ module Fastlane
 
         uri = URI.parse("https://api.telegram.org/bot#{token}/sendMessage")
         
-        if params[:proxy] 
+        if params[:proxy]
           proxy_uri = URI.parse(params[:proxy])
-          http = Net::HTTP.new(uri.host, uri.port, proxy_uri.host, proxy_uri.port)
+          http = Net::HTTP.new(uri.host, uri.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
           http.use_ssl = true
           request = Net::HTTP::Post.new(uri.request_uri)
           request.set_form_data({"chat_id" => chat_id, "text" => text, "parse_mode" => parse_mode})
