@@ -14,7 +14,13 @@ fastlane add_plugin telegram
 
 Allows post messages to telegram channel
 
-**Note to author:** Add a more detailed description about this plugin here. If your plugin contains multiple actions, make sure to mention them here.
+```ruby
+telegram(
+  token: ENV['TG_BOT_TOKEN'], # get token from @BotFather
+  chat_id: ENV['TG_CHAT_ID'], # https://stackoverflow.com/questions/33858927/how-to-obtain-the-chat-id-of-a-private-telegram-channel
+  text: "Hello world, Telegram!"
+)
+```
 
 ## Example
 
