@@ -18,7 +18,9 @@ Allows post messages to telegram channel
 telegram(
   token: ENV['TG_BOT_TOKEN'], # get token from @BotFather
   chat_id: ENV['TG_CHAT_ID'], # https://stackoverflow.com/questions/33858927/how-to-obtain-the-chat-id-of-a-private-telegram-channel
-  text: "Hello world, Telegram!"
+  text: "Hello world, Telegram!", # Required
+  file: "file.pdf", # Optional. Please note, Bots can currently send files of any type of up to 50 MB in size.
+  mime_type: "application/pdf" # Required if file exist
 )
 ```
 
