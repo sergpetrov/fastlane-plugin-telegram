@@ -11,11 +11,16 @@ module Fastlane
         file_path = params[:file]
         mime_type = params[:mime_type]
 
-        if File.exist?(file_path) && mime_type == nil 
-          UI.user_error!("The mime type, required for send file")
-        end
+        file = nil
+        if file_path != nil 
+          if File.exist?(file_path)
+            if mime_type == nil 
+              UI.user_error!("The mime type, required for send file")
+            end
 
-        file = (File.exist?(file_path) ? UploadIO.new(file_path, mime_type) : nil)
+            file = UploadIO.new(file_path, mime_type)
+          end
+        end
 
         if file_path != nil && file == nil 
           UI.message("Can't find file on path location")
