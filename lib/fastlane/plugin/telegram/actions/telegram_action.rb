@@ -8,19 +8,45 @@ module Fastlane
         chat_id = params[:chat_id]
         text = params[:text]
         parse_mode = params[:parse_mode]
+        file_path = params[:file]
+        mime_type = params[:mime_type]
 
-        uri = URI.parse("https://api.telegram.org/bot#{token}/sendMessage")
+        file = nil
+        if file_path != nil 
+          if File.exist?(file_path)
+            if mime_type == nil 
+              UI.user_error!("The mime type, required for send file")
+            end
+
+            file = UploadIO.new(file_path, mime_type)
+          end
+        end
+
+        if file_path != nil && file == nil 
+          UI.message("Can't find file on path location")
+        end
+
+        method = (file == nil ? "sendMessage" : "sendDocument")
+        uri = URI.parse("https://api.telegram.org/bot#{token}/#{method}")
         
+        http = Net::HTTP.new(uri.host, uri.port)
         if params[:proxy]
           proxy_uri = URI.parse(params[:proxy])
           http = Net::HTTP.new(uri.host, uri.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
-          http.use_ssl = true
-          request = Net::HTTP::Post.new(uri.request_uri)
-          request.set_form_data({"chat_id" => chat_id, "text" => text, "parse_mode" => parse_mode})
-          response = http.request(request)
-        else
-          response = Net::HTTP.post_form(uri, {:chat_id => chat_id, :text => text, :parse_mode => parse_mode})
         end
+        http.use_ssl = true
+
+        require 'net/http/post/multipart'
+        text_parameter = (file == nil ? "text" : "caption")
+        request = Net::HTTP::Post::Multipart.new(uri, 
+        { 
+          "chat_id" => chat_id,
+          text_parameter => text,
+          "parse_mode" => parse_mode,
+          "document" => file
+        })
+
+        response = http.request(request)
       end
 
       def self.description
@@ -56,6 +82,16 @@ module Fastlane
                                         description: "Text of the message to be sent",
                                            optional: false,
                                                type: String),
+                   FastlaneCore::ConfigItem.new(key: :file,
+                                           env_name: "TELEGRAM_FILE",
+                                         description: "File path to the file to be sent",
+                                             optional: true,
+                                                 type: String),
+                   FastlaneCore::ConfigItem.new(key: :mime_type,
+                                           env_name: "TELEGRAM_FILE_MIME_TYPE",
+                                         description: "Mime type of file to be sent",
+                                             optional: true,
+                                                 type: String),
                    FastlaneCore::ConfigItem.new(key: :parse_mode,
                                            env_name: "TELEGRAM_PARSE_MODE",
                                         description: "Param (Markdown / HTML) for using markdown or HTML support in message",
